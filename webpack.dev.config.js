@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
+const autoprefixer = require('autoprefixer')
 
 const BUILD_DIR = path.resolve(__dirname, 'dev')
 const SRC_DIR = path.resolve(__dirname, 'src')
@@ -19,11 +20,8 @@ const config = {
   },
   module : {
     loaders : [
-      {
-        test : /\.jsx?/,
-        loaders: ['babel-loader'],
-        exclude: /node_modules/
-      }
+      { test : /\.jsx?$/, loaders: ['babel-loader'], exclude: /node_modules/ },
+      { test: /\.css$/, loaders: ['style-loader', 'css-loader?sourceMap', 'postcss-loader'] }
     ]
   },
   devServer: {
@@ -43,6 +41,16 @@ const config = {
     }),
 
     new webpack.DefinePlugin(GLOBALS),
+
+    new webpack.LoaderOptionsPlugin({
+      minimize: false,
+      debug: true,
+      noInfo: true, // set to false to see a list of every file being bundled.
+      options: {
+        context: '/',
+        postcss: () => [autoprefixer],
+      }
+    })
   ]
 }
 
